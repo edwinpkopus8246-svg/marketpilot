@@ -17,7 +17,7 @@ exports.handler = async (event) => {
     const { code, code_verifier, redirect_uri } =
       JSON.parse(event.body || "{}");
 
-    const clientId = process.env.DERIV_CLIENT_ID;
+   const clientId = process.env.DERIV_CLIENT_ID || "34JFkNY9BMF0SlqJAihJ0"; 
     const expectedRedirect =
       "https://shiny-banoffee-a792f2.netlify.app";
 
