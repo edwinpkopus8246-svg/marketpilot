@@ -1,1 +1,733 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080d18">
+  <title>Marketpilot.pro | Trading Dashboard</title>
+  <style>
+    :root {
+      --bg: #080d18;
+      --panel: #111a2b;
+      --panel2: #0c1423;
+      --border: #243149;
+      --text: #f3f6ff;
+      --muted: #8e9bb2;
+      --green: #18d69b;
+      --red: #ff6377;
+      --blue: #5687ff;
+      --gold: #f4c66b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;
+    }
+
+    button, select, input { font: inherit; }
+    button { cursor: pointer; }
+
+    .app { min-height: 100vh; }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      padding: 17px 5%;
+      background: #0b1220;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      font-size: 22px;
+      font-weight: 850;
+      letter-spacing: -1px;
+    }
+
+    .brand span { color: var(--green); }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status {
+      border: 1px solid #1a805f;
+      background: #0b2a24;
+      color: #6bf0bf;
+      padding: 7px 11px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: #253a61;
+      font-weight: 800;
+    }
+
+    .notice {
+      padding: 11px 5%;
+      background: #332817;
+      border-bottom: 1px solid #70572a;
+      color: #ffe0a0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    main {
+      max-width: 1450px;
+      padding: 28px 5% 50px;
+      margin: auto;
+    }
+
+    .page-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    h1 { font-size: 28px; margin: 0 0 7px; }
+    h2 { font-size: 17px; margin: 0; }
+    p { color: var(--muted); }
+
+    .subheading { margin: 0; font-size: 13px; }
+
+    .demo-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--green);
+      border: 1px solid #1a805f;
+      background: #0c2724;
+      padding: 9px 13px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .dot {
+      height: 7px;
+      width: 7px;
+      background: var(--green);
+      border-radius: 50%;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .panel, .stat {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+
+    .stat { padding: 20px; }
+    .stat-label { color: var(--muted); font-size: 13px; }
+    .stat-value {
+      font-size: 27px;
+      font-weight: 800;
+      margin-top: 10px;
+      overflow-wrap: anywhere;
+    }
+
+    .stat-note { font-size: 12px; color: var(--muted); margin-top: 7px; }
+    .green { color: var(--green); }
+    .red { color: var(--red); }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.8fr) minmax(290px, 0.9fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .panel { padding: 20px; min-width: 0; }
+    .panel-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .asset-select, .field input, .field select {
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 11px;
+      border-radius: 8px;
+      width: 100%;
+      outline: none;
+    }
+
+    .asset-select { width: auto; max-width: 100%; }
+
+    .chart-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .price { font-size: 25px; font-weight: 800; }
+    .chart-wrap {
+      width: 100%;
+      height: 290px;
+      position: relative;
+      background: #0b1423;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    canvas { width: 100%; height: 100%; display: block; }
+
+    .chart-caption {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .trade-panel h2 { margin-bottom: 7px; }
+    .small-copy { color: var(--muted); font-size: 12px; line-height: 1.6; }
+
+    .field { margin-top: 18px; }
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: #d3dced;
+    }
+
+    .field input:focus, .field select:focus {
+      border-color: var(--blue);
+    }
+
+    .trade-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+      margin-top: 20px;
+    }
+
+    .trade-btn {
+      border: 0;
+      color: #06130f;
+      border-radius: 9px;
+      padding: 14px 8px;
+      font-weight: 850;
+      transition: opacity .15s;
+    }
+
+    .trade-btn:hover { opacity: .86; }
+    .buy { background: var(--green); }
+    .sell { background: var(--red); color: #260a10; }
+
+    .secondary-btn {
+      width: 100%;
+      margin-top: 12px;
+      background: #1a2942;
+      color: var(--text);
+      border: 1px solid #334461;
+      border-radius: 9px;
+      padding: 12px;
+      font-weight: 700;
+    }
+
+    .secondary-btn:hover { background: #243653; }
+
+    .trade-message {
+      display: none;
+      padding: 12px;
+      margin-top: 14px;
+      border-radius: 9px;
+      background: #0b2a24;
+      color: #8ff0ca;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .trade-message.show { display: block; }
+
+    .warning {
+      padding: 12px;
+      border-radius: 9px;
+      background: #302719;
+      color: #f8d99b;
+      font-size: 12px;
+      line-height: 1.6;
+      margin-top: 15px;
+    }
+
+    .history-panel { margin-top: 20px; }
+    .table-scroll { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      min-width: 440px;
+    }
+
+    th, td {
+      padding: 14px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    td { color: #dfe7f6; }
+    .empty { text-align: center; padding: 26px; color: var(--muted); }
+
+    .account-panel { margin-top: 20px; }
+    .account-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .account-row:last-child { border-bottom: 0; }
+    .account-row span:first-child { color: var(--muted); }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 22px 5%;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 850px) {
+      .workspace { grid-template-columns: 1fr; }
+      .trade-panel { order: -1; }
+    }
+
+    @media (max-width: 600px) {
+      header { padding: 14px 4%; }
+      .brand { font-size: 19px; }
+      main { padding: 22px 4% 35px; }
+      .notice { padding: 11px 4%; }
+      .stats { grid-template-columns: 1fr; gap: 10px; }
+      .stat { padding: 16px; }
+      .stat-value { font-size: 23px; }
+      .panel { padding: 15px; }
+      h1 { font-size: 24px; }
+      .chart-wrap { height: 235px; }
+      .status { font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">Marketpilot<span>.pro</span></div>
+    <div class="header-right">
+      <span class="status">● DEMO MODE</span>
+      <div class="avatar">MP</div>
+    </div>
+  </header>
+
+  <div class="notice">
+    <strong>SIMULATED TRADING ONLY:</strong>
+    Prices, orders and results on this page are illustrative. No Deriv account is connected and no real trades are placed.
+  </div>
+
+  <main>
+    <div class="page-heading">
+      <div>
+        <h1>Trading Dashboard</h1>
+        <p class="subheading">Practice your trading workflow with virtual funds.</p>
+      </div>
+      <div class="demo-label"><span class="dot"></span> VIRTUAL ACCOUNT</div>
+    </div>
+
+    <section class="stats">
+      <div class="stat">
+        <div class="stat-label">Virtual balance</div>
+        <div class="stat-value" id="balance">$10,000.00</div>
+        <div class="stat-note">Practice funds only</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Simulated P/L</div>
+        <div class="stat-value green" id="profit">$0.00</div>
+        <div class="stat-note">From your practice trades</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Practice trades</div>
+        <div class="stat-value" id="tradeCount">0</div>
+        <div class="stat-note">Orders placed in this session</div>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <div>
+        <div class="panel">
+          <div class="panel-heading">
+            <h2>Market chart</h2>
+            <select id="asset" class="asset-select" aria-label="Select illustrative market">
+              <option value="Volatility 10 Index">Volatility 10 Index</option>
+              <option value="Volatility 25 Index">Volatility 25 Index</option>
+              <option value="Volatility 50 Index">Volatility 50 Index</option>
+              <option value="Volatility 75 Index">Volatility 75 Index</option>
+            </select>
+          </div>
+          <div class="chart-info">
+            <div>
+              <div class="small-copy" id="assetLabel">Volatility 10 Index</div>
+              <div class="price" id="price">1,245.80</div>
+            </div>
+            <div class="green" id="change">+0.00%</div>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="chart" aria-label="Illustrative simulated price chart"></canvas>
+          </div>
+          <div class="chart-caption">
+            <span>Illustrative chart — not live market data</span>
+            <span>Interval: 1 minute</span>
+          </div>
+        </div>
+
+        <div class="panel history-panel">
+          <div class="panel-heading">
+            <h2>Practice trade history</h2>
+            <span class="small-copy" id="historyCount">0 records</span>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Market</th>
+                  <th>Direction</th>
+                  <th>Stake</th>
+                  <th>Result</th>
+                </tr>
+              </thead>
+              <tbody id="history">
+                <tr><td colspan="5" class="empty">No practice trades yet. Place a demo trade to begin.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <div class="panel trade-panel">
+          <h2>Place a practice trade</h2>
+          <p class="small-copy">These buttons simulate a trade locally. Results are randomly generated and do not predict real market outcomes.</p>
+
+          <div class="field">
+            <label for="stake">Stake amount (USD)</label>
+            <input id="stake" type="number" value="10" min="1" max="10000" step="1">
+          </div>
+
+          <div class="field">
+            <label for="duration">Practice duration</label>
+            <select id="duration">
+              <option value="1 minute">1 minute</option>
+              <option value="5 minutes">5 minutes</option>
+              <option value="15 minutes">15 minutes</option>
+            </select>
+          </div>
+
+          <div class="trade-buttons">
+            <button class="trade-btn buy" id="buyBtn">▲ BUY</button>
+            <button class="trade-btn sell" id="sellBtn">▼ SELL</button>
+          </div>
+
+          <div id="tradeMessage" class="trade-message" role="status" aria-live="polite"></div>
+
+          <div class="warning">
+            Demo only. This prototype does not use live quotes, execute orders, or connect to your Deriv account.
+          </div>
+
+          <button class="secondary-btn" id="resetBtn">Reset virtual account</button>
+        </div>
+
+        <div class="panel account-panel">
+          <div class="panel-heading"><h2>Account</h2></div>
+          <div class="account-row"><span>Account type</span><strong>Virtual demo</strong></div>
+          <div class="account-row"><span>Connection</span><strong class="gold" style="color:var(--gold)">Not connected</strong></div>
+          <div class="account-row"><span>Currency</span><strong>USD (virtual)</strong></div>
+          <button class="secondary-btn" id="liveBtn">Live account setup</button>
+          <p class="small-copy">Live setup is not available in this prototype. Official Deriv authentication and API integration must be implemented and tested before account access or real trading can work.</p>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <footer>
+    <strong>Marketpilot.pro</strong> — Independent prototype, not an official Deriv website.<br>
+    All displayed prices and trading results are simulated. Trading involves risk.
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const START_BALANCE = 10000;
+  let balance = START_BALANCE;
+  let totalProfit = 0;
+  let trades = [];
+  let prices = [];
+  let currentPrice = 1245.80;
+  let initialPrice = currentPrice;
+
+  const $ = id => document.getElementById(id);
+  const money = value => "$" + value.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+
+  function createPrices() {
+    prices = [];
+    let value = currentPrice;
+    for (let i = 0; i < 45; i++) {
+      value += (Math.random() - 0.48) * 8;
+      prices.push(value);
+    }
+    currentPrice = prices[prices.length - 1];
+    initialPrice = prices[0];
+  }
+
+  function drawChart() {
+    const canvas = $("chart");
+    const rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const w = rect.width;
+    const h = rect.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const left = 12, right = 58, top = 15, bottom = 24;
+    const chartW = w - left - right;
+    const chartH = h - top - bottom;
+    const low = Math.min(...prices) - 5;
+    const high = Math.max(...prices) + 5;
+    const y = v => top + (high - v) / (high - low) * chartH;
+    const x = i => left + i / (prices.length - 1) * chartW;
+
+    ctx.font = "10px system-ui";
+    ctx.fillStyle = "#8e9bb2";
+    ctx.strokeStyle = "#202c40";
+    ctx.lineWidth = 1;
+
+    for (let i = 0; i < 5; i++) {
+      const gy = top + i * chartH / 4;
+      ctx.beginPath();
+      ctx.moveTo(left, gy);
+      ctx.lineTo(w - right + 8, gy);
+      ctx.stroke();
+      const label = (high - i * (high - low) / 4).toFixed(2);
+      ctx.fillText(label, w - right + 12, gy + 3);
+    }
+
+    const gradient = ctx.createLinearGradient(0, top, 0, h - bottom);
+    gradient.addColorStop(0, "rgba(24,214,155,0.24)");
+    gradient.addColorStop(1, "rgba(24,214,155,0.00)");
+
+    ctx.beginPath();
+    prices.forEach((p, i) => {
+      if (i === 0) ctx.moveTo(x(i), y(p));
+      else ctx.lineTo(x(i), y(p));
+    });
+    ctx.lineTo(x(prices.length - 1), h - bottom);
+    ctx.lineTo(x(0), h - bottom);
+    ctx.closePath();
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    ctx.beginPath();
+    prices.forEach((p, i) => {
+      if (i === 0) ctx.moveTo(x(i), y(p));
+      else ctx.lineTo(x(i), y(p));
+    });
+    ctx.strokeStyle = "#18d69b";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    const lastY = y(currentPrice);
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(left, lastY);
+    ctx.lineTo(w - right + 5, lastY);
+    ctx.strokeStyle = "#18d69b";
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = "#12392f";
+    ctx.fillRect(w - right + 7, lastY - 10, right - 9, 20);
+    ctx.fillStyle = "#8ff0ca";
+    ctx.fillText(currentPrice.toFixed(2), w - right + 11, lastY + 3);
+
+    ctx.fillStyle = "#8e9bb2";
+    ctx.fillText("Past", left, h - 7);
+    ctx.fillText("Now", w - right - 14, h - 7);
+  }
+
+  function updateDashboard() {
+    $("balance").textContent = money(balance);
+    $("profit").textContent = (totalProfit >= 0 ? "+" : "") + money(totalProfit);
+    $("profit").className = "stat-value " + (totalProfit >= 0 ? "green" : "red");
+    $("tradeCount").textContent = trades.length;
+    $("price").textContent = currentPrice.toLocaleString("en-US", {
+      minimumFractionDigits: 2, maximumFractionDigits: 2
+    });
+
+    const percent = initialPrice ? ((currentPrice - initialPrice) / initialPrice) * 100 : 0;
+    $("change").textContent = (percent >= 0 ? "+" : "") + percent.toFixed(2) + "%";
+    $("change").className = percent >= 0 ? "green" : "red";
+
+    const history = $("history");
+    $("historyCount").textContent = trades.length + (trades.length === 1 ? " record" : " records");
+
+    if (!trades.length) {
+      history.innerHTML = '<tr><td colspan="5" class="empty">No practice trades yet. Place a demo trade to begin.</td></tr>';
+      return;
+    }
+
+    history.innerHTML = trades.map(trade => {
+      const directionClass = trade.direction === "BUY" ? "green" : "red";
+      const resultClass = trade.result >= 0 ? "green" : "red";
+      return `<tr>
+        <td>${trade.time}</td>
+        <td>${trade.asset}</td>
+        <td class="${directionClass}">${trade.direction}</td>
+        <td>${money(trade.stake)}</td>
+        <td class="${resultClass}">${trade.result >= 0 ? "+" : ""}${money(trade.result)}</td>
+      </tr>`;
+    }).join("");
+  }
+
+  function placeTrade(direction) {
+    const stake = Number($("stake").value);
+    const message = $("tradeMessage");
+
+    if (!Number.isFinite(stake) || stake < 1) {
+      message.textContent = "Enter a valid stake of at least $1.";
+      message.classList.add("show");
+      return;
+    }
+
+    if (stake > balance) {
+      message.textContent = "Your virtual balance is too low for that stake.";
+      message.classList.add("show");
+      return;
+    }
+
+    // Entirely random practice result. No market prediction or real order.
+    const won = Math.random() >= 0.48;
+    const result = won ? stake * 0.75 : -stake;
+    balance += result;
+    totalProfit += result;
+
+    trades.unshift({
+      time: new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", second: "2-digit"}),
+      asset: $("asset").value,
+      direction: direction,
+      stake: stake,
+      result: result
+    });
+
+    message.textContent = direction + " simulated. Random practice result: " +
+      (result >= 0 ? "+" : "") + money(result) +
+      ". This is not a real trade or a prediction.";
+    message.classList.add("show");
+
+    // Keep history manageable during a demo session.
+    if (trades.length > 30) trades.pop();
+    updateDashboard();
+  }
+
+  function changeAsset() {
+    $("assetLabel").textContent = $("asset").value;
+    currentPrice = 500 + Math.random() * 2000;
+    createPrices();
+    updateDashboard();
+    drawChart();
+  }
+
+  $("buyBtn").addEventListener("click", () => placeTrade("BUY"));
+  $("sellBtn").addEventListener("click", () => placeTrade("SELL"));
+  $("asset").addEventListener("change", changeAsset);
+
+  $("resetBtn").addEventListener("click", () => {
+    if (!window.confirm("Reset your virtual balance and clear practice history?")) return;
+    balance = START_BALANCE;
+    totalProfit = 0;
+    trades = [];
+    $("tradeMessage").classList.remove("show");
+    currentPrice = 1245.80;
+    createPrices();
+    updateDashboard();
+    drawChart();
+  });
+
+  $("liveBtn").addEventListener("click", () => {
+    window.alert(
+      "Live account setup is not implemented yet. No Deriv account is connected. " +
+      "The next development step is to build and test a secure authorization callback before connecting any account."
+    );
+  });
+
+  // Illustrative movement only. This is not a live price feed.
+  function tick() {
+    const last = prices[prices.length - 1];
+    currentPrice = Math.max(1, last + (Math.random() - 0.49) * 5);
+    prices.push(currentPrice);
+    if (prices.length > 45) prices.shift();
+    initialPrice = prices[0];
+    updateDashboard();
+    drawChart();
+  }
+
+  createPrices();
+  updateDashboard();
+  drawChart();
+  window.addEventListener("resize", drawChart);
+  window.setInterval(tick, 2500);
+})();
+</script>
+</body>
+</html>
+
