@@ -48,12 +48,10 @@ footer{text-align:center;color:var(--muted);padding:25px;font-size:12px}
     <button class="secondary" onclick="showAccount()">Account / Connect</button>
   </div>
 </header>
-
 <main>
 <h1>Trading dashboard</h1>
 <p>Explore markets and practise trading in a simulated environment.</p>
 <div class="notice"><strong>Demo only:</strong> Prices and trades are illustrative. No real orders are placed. Live trading is not enabled.</div>
-
 <div class="grid">
 <section class="panel">
   <div class="row">
@@ -72,7 +70,6 @@ footer{text-align:center;color:var(--muted);padding:25px;font-size:12px}
   <canvas id="chart" class="chart"></canvas>
   <p class="muted">This locally generated chart is not a live market feed.</p>
 </section>
-
 <section class="panel">
   <h2>Demo account</h2>
   <div class="stat"><span class="muted">Demo balance</span><strong id="balance">$10,000.00</strong></div>
@@ -88,7 +85,6 @@ footer{text-align:center;color:var(--muted);padding:25px;font-size:12px}
   <div id="tradeStatus" class="status" aria-live="polite">Ready for a demo trade.</div>
 </section>
 </div>
-
 <section class="panel section">
   <div class="row"><h2>Demo trade history</h2><button class="secondary" onclick="resetDemo()">Reset demo</button></div>
   <div style="overflow-x:auto">
@@ -96,7 +92,6 @@ footer{text-align:center;color:var(--muted);padding:25px;font-size:12px}
     <tbody id="history"><tr><td colspan="5" class="muted">No demo trades yet.</td></tr></tbody></table>
   </div>
 </section>
-
 <section class="panel section" id="account">
   <h2>Deriv account connection</h2>
   <p>Authorize through Deriv's official sign-in page. Marketpilot never asks for your Deriv password.</p>
@@ -108,16 +103,11 @@ footer{text-align:center;color:var(--muted);padding:25px;font-size:12px}
 </section>
 </main>
 <footer>Marketpilot prototype · Simulated trading only · Not financial advice</footer>
-
 <script>
 "use strict";
 
-/* Your OAuth 2.0 Client ID (not your legacy App ID). */
 const DERIV_OAUTH_CLIENT_ID = "34JFkNY9BMF0SlqJAihJ0";
-
-/* Preserve the redirect URI registered with Deriv. */
 const REDIRECT_URI = "https://shiny-banoffee-a792f2.netlify.app";
-
 document.getElementById("redirectDisplay").textContent = REDIRECT_URI;
 
 let demoBalance=10000;
@@ -261,9 +251,9 @@ async function inspectOAuthCallback(){
     });
     const result=await response.json();
     if(!response.ok||!result.access_token)throw new Error(result.details||result.error||"Token exchange failed");
-    /* Token remains in memory only, not localStorage. */
-    window.marketpilotDerivAccessToken=result.access_token;
-    status.textContent="Authorization succeeded. Account verification and API integration remain incomplete; live trading is disabled.";
+    window.marketpilotDerivAccessToken = result.access_token;
+    status.textContent = "Authorization succeeded. Verifying your Deriv trading accounts…";
+    await verifyDerivAccounts(result.access_token);
   }catch(err){
     status.textContent="Authorization failed: "+err.message+". Check the Netlify function and OAuth settings.";
   }finally{
@@ -271,6 +261,47 @@ async function inspectOAuthCallback(){
     document.getElementById("connectButton").disabled=false;
   }
 }
+
+async function verifyDerivAccounts(accessToken) {
+  const status = document.getElementById("oauthStatus");
+  try {
+    const response = await fetch("https://api.derivws.com/trading/v1/options/accounts", {
+      method: "GET",
+      headers: {
+        "Authorization": "Bearer " + accessToken,
+        "Accept": "application/json"
+      }
+    });
+    let payload = {};
+    try { payload = await response.json(); } catch (_) {}
+    if (!response.ok) {
+      const apiMessage =
+        payload?.errors?.[0]?.message ||
+        payload?.error?.message ||
+        (response.status === 403
+          ? "Access denied. Reconnect and ensure the OAuth app has the trade scope."
+          : "Deriv account verification request failed (HTTP " + response.status + ").");
+      status.textContent = "OAuth succeeded, but account verification failed: " + apiMessage;
+      return;
+    }
+    const accounts =
+      Array.isArray(payload?.data) ? payload.data :
+      Array.isArray(payload?.data?.accounts) ? payload.data.accounts :
+      Array.isArray(payload?.accounts) ? payload.accounts : null;
+    if (accounts) {
+      status.textContent =
+        "Deriv account verified. " + accounts.length +
+        " Options account(s) found. Account details are connected; live trading remains disabled until order execution is implemented and tested.";
+    } else {
+      status.textContent =
+        "Deriv account API responded successfully. Account verification request passed; live trading remains disabled until order execution is implemented and tested.";
+    }
+  } catch (err) {
+    status.textContent =
+      "OAuth succeeded, but account verification could not reach Deriv's API. Check the connection and try again. Live trading remains disabled.";
+  }
+}
+
 function disconnectDeriv(){
   delete window.marketpilotDerivAccessToken;
   clearOAuthSession();
