@@ -3,10 +3,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Marketpilot — Trading Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketpilot | Trading Dashboard</title>
 <style>
-:root{color-scheme:dark;--bg:#090e18;--panel:#111a2a;--line:#24334b;--text:#edf3ff;--muted:#94a5bd;--green:#20d6a0;--red:#ff647c;--blue:#5587ff}
+:root{color-scheme:dark;--bg:#090e18;--panel:#111a2a;--line:#24334b;--text:#edf3ff;--muted:#94a5bd;--green:#20d6a0;--red:#ff647c}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
 button,input,select{font:inherit}
@@ -15,7 +15,8 @@ header{display:flex;align-items:center;justify-content:space-between;gap:12px;pa
 .logo{font-size:23px;font-weight:900}.logo span{color:var(--green)}
 .pill{font-size:12px;border:1px solid #315c52;color:var(--green);padding:7px 10px;border-radius:30px}
 main{max-width:1200px;margin:auto;padding:24px 16px}
-h1{font-size:clamp(25px,4vw,36px);margin-bottom:8px}h2{font-size:17px;margin:0 0 16px}
+h1{font-size:clamp(25px,4vw,36px);margin-bottom:8px}
+h2{font-size:17px;margin:0 0 16px}
 p{color:var(--muted);line-height:1.55}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:18px;min-width:0}
 .notice{border:1px solid #765b2d;background:#251e13;color:#ffdda1;border-radius:10px;padding:13px;margin:18px 0}
@@ -23,19 +24,20 @@ p{color:var(--muted);line-height:1.55}
 .row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .muted,.status{font-size:13px;color:var(--muted)}
 .price{font-size:29px;font-weight:800;margin:10px 0}
-.chart{display:block;width:100%;height:280px;background:#0c1422;border-radius:10px}
+.chart{display:block;width:100%;height:270px;background:#0c1422;border-radius:10px}
 .field{display:block;margin:14px 0 6px;color:var(--muted);font-size:13px}
 input,select{width:100%;padding:12px;background:#0a1220;border:1px solid var(--line);border-radius:9px;color:var(--text)}
-button:disabled{opacity:.55;cursor:not-allowed}
 .actions{display:flex;gap:10px;margin-top:16px}
-.buy{background:var(--green);color:#06160f;flex:1}.sell{background:var(--red);color:#21070c;flex:1}.secondary{background:#23344e;color:white}
+.buy{background:var(--green);color:#06160f;flex:1}
+.sell{background:var(--red);color:#21070c;flex:1}
+.secondary{background:#23344e;color:white}
 .stat{background:#0b1422;border:1px solid var(--line);border-radius:10px;padding:13px}
 .stat strong{display:block;font-size:21px;margin-top:8px}
 .section{margin-top:18px}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th,td{text-align:left;padding:10px 5px;border-bottom:1px solid var(--line)}
 footer{text-align:center;color:var(--muted);padding:25px;font-size:12px}
-@media(max-width:740px){.grid{grid-template-columns:1fr}main{padding:18px 12px}.chart{height:230px}.panel{padding:15px}}
+@media(max-width:740px){.grid{grid-template-columns:1fr}main{padding:18px 12px}.chart{height:225px}.panel{padding:15px}}
 </style>
 </head>
 <body>
@@ -49,7 +51,7 @@ footer{text-align:center;color:var(--muted);padding:25px;font-size:12px}
 
 <main>
 <h1>Trading dashboard</h1>
-<p>Explore markets and practise trades in a simulated environment.</p>
+<p>Explore markets and practise trading in a simulated environment.</p>
 <div class="notice"><strong>Demo only:</strong> Prices and trades are illustrative. No real orders are placed. Live trading is not enabled.</div>
 
 <div class="grid">
@@ -82,7 +84,7 @@ footer{text-align:center;color:var(--muted);padding:25px;font-size:12px}
     <button class="buy" onclick="trade('BUY')">Buy / Rise</button>
     <button class="sell" onclick="trade('SELL')">Sell / Fall</button>
   </div>
-  <p class="muted">Demo only: each trade randomly wins or loses the stake. This is not a prediction of real markets.</p>
+  <p class="muted">Simulated results are random and do not predict real market movements.</p>
   <div id="tradeStatus" class="status" aria-live="polite">Ready for a demo trade.</div>
 </section>
 </div>
@@ -97,11 +99,11 @@ footer{text-align:center;color:var(--muted);padding:25px;font-size:12px}
 
 <section class="panel section" id="account">
   <h2>Deriv account connection</h2>
-  <p>Connect through Deriv's official authorization page. Marketpilot never asks for your Deriv password.</p>
+  <p>Authorize through Deriv's official sign-in page. Marketpilot never asks for your Deriv password.</p>
   <p class="muted">Registered redirect URI: <span id="redirectDisplay"></span></p>
   <button class="secondary" id="connectButton" onclick="beginDerivOAuth()">Connect Deriv account</button>
   <p class="status" id="oauthStatus" aria-live="polite">Not connected.</p>
-  <div class="notice">OAuth authorization is not proof that the trading API works. Account verification and API integration are still required before any live trading can be enabled.</div>
+  <div class="notice">OAuth authorization alone does not enable live trading. Account verification and API integration must be completed first.</div>
   <button class="secondary" onclick="disconnectDeriv()">Clear local connection</button>
 </section>
 </main>
@@ -110,21 +112,19 @@ footer{text-align:center;color:var(--muted);padding:25px;font-size:12px}
 <script>
 "use strict";
 
-/* IMPORTANT: use your OAuth 2.0 Client ID, not your legacy App ID.
-   Keep this identical to the DERIV_CLIENT_ID value in Netlify.
-   Never put a client secret in browser code. */
-const DERIV_OAUTH_CLIENT_ID = "PASTE_YOUR_OAUTH_CLIENT_ID_HERE";
+/* Your OAuth 2.0 Client ID (not your legacy App ID). */
+const DERIV_OAUTH_CLIENT_ID = "34JFkNY9BMF0SlqJAihJ0";
 
-/* Must exactly match the URI registered with Deriv. */
+/* Preserve the redirect URI registered with Deriv. */
 const REDIRECT_URI = "https://shiny-banoffee-a792f2.netlify.app";
 
 document.getElementById("redirectDisplay").textContent = REDIRECT_URI;
 
-let demoBalance = 10000;
-let demoPrice = 1250;
-let demoTrades = [];
-let points = Array.from({length:45},(_,i)=>1250+Math.sin(i/3)*12+Math.cos(i/5)*8);
-let oauthBusy = false;
+let demoBalance=10000;
+let demoPrice=1250;
+let demoTrades=[];
+let points=Array.from({length:45},(_,i)=>1250+Math.sin(i/3)*12+Math.cos(i/5)*8);
+let oauthBusy=false;
 
 function money(n){
   return "$"+Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -135,22 +135,16 @@ function drawChart(){
   const r=c.getBoundingClientRect();
   if(!r.width)return;
   const d=window.devicePixelRatio||1;
-  c.width=Math.floor(r.width*d);
-  c.height=Math.floor(r.height*d);
-  const x=c.getContext("2d");
-  x.scale(d,d);
+  c.width=Math.floor(r.width*d);c.height=Math.floor(r.height*d);
+  const x=c.getContext("2d");x.scale(d,d);
   const w=r.width,h=r.height,p=22;
-  x.clearRect(0,0,w,h);
-  x.strokeStyle="#24334b";
-  for(let i=0;i<5;i++){
-    const y=p+i*(h-2*p)/4;
-    x.beginPath();x.moveTo(0,y);x.lineTo(w,y);x.stroke();
-  }
-  const low=Math.min(...points)-5,high=Math.max(...points)+5;
+  x.clearRect(0,0,w,h);x.strokeStyle="#24334b";
+  for(let i=0;i<5;i++){const y=p+i*(h-2*p)/4;x.beginPath();x.moveTo(0,y);x.lineTo(w,y);x.stroke();}
+  const lo=Math.min(...points)-5,hi=Math.max(...points)+5;
   x.beginPath();
   points.forEach((v,i)=>{
     const px=p+i*(w-2*p)/(points.length-1);
-    const py=h-p-(v-low)/(high-low)*(h-2*p);
+    const py=h-p-(v-lo)/(hi-lo)*(h-2*p);
     if(i===0)x.moveTo(px,py);else x.lineTo(px,py);
   });
   x.strokeStyle="#20d6a0";x.lineWidth=2;x.stroke();
@@ -162,35 +156,23 @@ function trade(action){
   const stake=Number(document.getElementById("stake").value);
   const status=document.getElementById("tradeStatus");
   if(!Number.isFinite(stake)||stake<1||stake>demoBalance){
-    status.textContent="Enter a stake of at least $1 and no more than your demo balance.";
-    return;
+    status.textContent="Enter a valid stake of at least $1 and no more than your demo balance.";return;
   }
   demoBalance-=stake;
-  const won=Math.random()<0.5;
-  const result=won?stake:-stake;
+  const result=Math.random()<0.5?stake:-stake;
   demoBalance+=stake+result;
-  demoTrades.unshift({
-    time:new Date().toLocaleTimeString(),
-    market:document.getElementById("market").value,
-    action,
-    stake,
-    result
-  });
-  demoPrice+=(Math.random()-.5)*12;
-  points.push(demoPrice);
+  demoTrades.unshift({time:new Date().toLocaleTimeString(),market:document.getElementById("market").value,action,stake,result});
+  demoPrice+=(Math.random()-.5)*12;points.push(demoPrice);
   if(points.length>60)points.shift();
   document.getElementById("balance").textContent=money(demoBalance);
   status.textContent="Simulated "+action+" completed. Result: "+(result>=0?"+":"")+money(result)+". No real order was placed.";
-  renderHistory();
-  drawChart();
+  renderHistory();drawChart();
 }
 
 function renderHistory(){
-  const body=document.getElementById("history");
-  body.replaceChildren();
+  const body=document.getElementById("history");body.replaceChildren();
   if(!demoTrades.length){
-    const tr=body.insertRow(),td=tr.insertCell();
-    td.colSpan=5;td.textContent="No demo trades yet.";return;
+    const tr=body.insertRow(),td=tr.insertCell();td.colSpan=5;td.textContent="No demo trades yet.";return;
   }
   demoTrades.slice(0,20).forEach(t=>{
     const tr=body.insertRow();
@@ -208,22 +190,15 @@ function resetDemo(){
   document.getElementById("tradeStatus").textContent="Demo balance reset to $10,000.";
   renderHistory();drawChart();
 }
-
-function showAccount(){
-  document.getElementById("account").scrollIntoView({behavior:"smooth"});
-}
+function showAccount(){document.getElementById("account").scrollIntoView({behavior:"smooth"});}
 
 function randomUrlSafe(bytes){
-  const a=new Uint8Array(bytes);
-  crypto.getRandomValues(a);
-  return btoa(String.fromCharCode(...a))
-    .replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+  const a=new Uint8Array(bytes);crypto.getRandomValues(a);
+  return btoa(String.fromCharCode(...a)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
 }
-
 async function makeChallenge(verifier){
   const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(verifier));
-  return btoa(String.fromCharCode(...new Uint8Array(digest)))
-    .replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+  return btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
 }
 
 async function beginDerivOAuth(){
@@ -231,28 +206,18 @@ async function beginDerivOAuth(){
   const status=document.getElementById("oauthStatus");
   const button=document.getElementById("connectButton");
   try{
-    if(!DERIV_OAUTH_CLIENT_ID ||
-       DERIV_OAUTH_CLIENT_ID==="PASTE_YOUR_OAUTH_CLIENT_ID_HERE"){
-      status.textContent="Setup needed: replace PASTE_YOUR_OAUTH_CLIENT_ID_HERE in index.html with your OAuth 2.0 Client ID.";
-      return;
-    }
-    if(!window.isSecureContext){
-      throw new Error("Please open the secure HTTPS Netlify website.");
-    }
+    if(!window.isSecureContext)throw new Error("Open the HTTPS Netlify website.");
     oauthBusy=true;button.disabled=true;
     status.textContent="Preparing secure Deriv authorization…";
-
     const verifier=randomUrlSafe(64);
     const challenge=await makeChallenge(verifier);
     const state=randomUrlSafe(32);
-
     sessionStorage.setItem("marketpilot_pkce_verifier",verifier);
     sessionStorage.setItem("marketpilot_oauth_state",state);
     sessionStorage.setItem("marketpilot_redirect_uri",REDIRECT_URI);
-
     const params=new URLSearchParams({
       response_type:"code",
-      client_id:DERIV_OAUTH_CLIENT_ID.trim(),
+      client_id:DERIV_OAUTH_CLIENT_ID,
       redirect_uri:REDIRECT_URI,
       scope:"trade",
       state,
@@ -269,63 +234,43 @@ async function beginDerivOAuth(){
 function clearOAuthSession(){
   ["marketpilot_pkce_verifier","marketpilot_oauth_state","marketpilot_redirect_uri"].forEach(k=>sessionStorage.removeItem(k));
 }
-
-function cleanOAuthUrl(){
-  history.replaceState({},document.title,location.pathname);
-}
+function cleanOAuthUrl(){history.replaceState({},document.title,location.pathname);}
 
 async function inspectOAuthCallback(){
   const params=new URLSearchParams(location.search);
-  const code=params.get("code");
-  const returnedState=params.get("state");
-  const oauthError=params.get("error");
+  const code=params.get("code"),state=params.get("state"),oauthError=params.get("error");
   if(!code&&!oauthError)return;
-
   cleanOAuthUrl();
   const status=document.getElementById("oauthStatus");
-
   if(oauthError){
-    status.textContent="Deriv authorization was not completed. You can try connecting again.";
+    status.textContent="Deriv authorization was not completed. Please try again.";
     clearOAuthSession();return;
   }
-
   const savedState=sessionStorage.getItem("marketpilot_oauth_state");
   const verifier=sessionStorage.getItem("marketpilot_pkce_verifier");
   const savedRedirect=sessionStorage.getItem("marketpilot_redirect_uri");
-
-  if(!code||!savedState||returnedState!==savedState||!verifier||savedRedirect!==REDIRECT_URI){
-    status.textContent="Authorization verification failed. Please try connecting again.";
+  if(!code||!savedState||state!==savedState||!verifier||savedRedirect!==REDIRECT_URI){
+    status.textContent="Authorization verification failed. Please connect again.";
     clearOAuthSession();return;
   }
-
   status.textContent="Checking Deriv authorization…";
   try{
     const response=await fetch("/.netlify/functions/deriv-token",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        code,
-        code_verifier:verifier,
-        redirect_uri:REDIRECT_URI
-      })
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({code,code_verifier:verifier,redirect_uri:REDIRECT_URI})
     });
     const result=await response.json();
-    if(!response.ok||!result.access_token){
-      throw new Error(result.details||result.error||"Token exchange failed");
-    }
-
-    /* Memory only. Do not save the token in localStorage or a URL. */
+    if(!response.ok||!result.access_token)throw new Error(result.details||result.error||"Token exchange failed");
+    /* Token remains in memory only, not localStorage. */
     window.marketpilotDerivAccessToken=result.access_token;
-    status.textContent="Authorization succeeded. Account verification and API integration are still incomplete; live trading remains disabled.";
+    status.textContent="Authorization succeeded. Account verification and API integration remain incomplete; live trading is disabled.";
   }catch(err){
-    status.textContent="Authorization could not be completed: "+err.message+". Check the Netlify function and Deriv OAuth configuration.";
+    status.textContent="Authorization failed: "+err.message+". Check the Netlify function and OAuth settings.";
   }finally{
-    clearOAuthSession();
-    oauthBusy=false;
+    clearOAuthSession();oauthBusy=false;
     document.getElementById("connectButton").disabled=false;
   }
 }
-
 function disconnectDeriv(){
   delete window.marketpilotDerivAccessToken;
   clearOAuthSession();
